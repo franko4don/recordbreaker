@@ -1,8 +1,8 @@
 <?php
 include 'classes.php';
 include 'design.php';
-navbar("Registration");
-echo '<br><br><br>';
+navbar("cdsignup");
+//echo '<br><br><br>';
 
 
 $form_handler = new FormHandler;
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($create) {
             $insert = $dbhandler->insert($names, "cdmarketers");
             if ($insert) {
-                //header("Location: message.php");
+                header("Location: message.php");
             }
         }
         //check if the data was succesfully updated to database

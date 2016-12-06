@@ -1,8 +1,9 @@
 <?php
 
 //include 'connect.php';
-$admin_username="franko4don";
-$admin_password="";
+$admin_username = "franko4don";
+$admin_password = "";
+
 class FormHandler extends DBHandler {
 
     /**
@@ -30,11 +31,11 @@ class FormHandler extends DBHandler {
                 }
             }
         }
-        if (isset($names['password'])&&strcmp($names['password'], $names['confirmpassword']) != 0) {
+        if (isset($names['password']) && strcmp($names['password'], $names['confirmpassword']) != 0) {
             $errors['passwordmismatch'] = "passwords dont match";
         }
 
-        if (isset($names['password'])&&strlen($names['password']) < 6) {
+        if (isset($names['password']) && strlen($names['password']) < 6) {
             $errors['passwordweak'] = "password too weak";
         }
 
@@ -149,7 +150,6 @@ class ImageHandler {
 
 }
 
-
 class DBHandler {
 
     /**
@@ -162,7 +162,7 @@ class DBHandler {
         global $admin_password;
         $link = $this->connect($admin_username, $admin_password);
         if ($link) {
-            
+
             $query1 = "CREATE USER '" . $username . "'@'localhost' IDENTIFIED BY '" . $password . "'";
             $query2 = "GRANT SELECT ON *.* TO '" . $username . "'@'localhost' IDENTIFIED BY '" . $password . "' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0";
             $query3 = "REVOKE GRANT OPTION ON *.* FROM '" . $username . "'@'localhost'";
@@ -192,10 +192,10 @@ class DBHandler {
     function connect($admin_username, $admin_password) {
         $link = mysqli_connect("localhost", $admin_username, $admin_password, "recordbreakers");
         if ($link) {
-            echo "Connection Succesful<br>";
+          //  echo "Connection Succesful<br>";
             return $link;
         } else {
-            echo "Connection failed<br>";
+          //  echo "Connection failed<br>";
             return !$link;
         }
     }
@@ -218,7 +218,7 @@ class DBHandler {
     function createTableForInvestor($array, $table) {
         global $admin_username;
         global $admin_password;
-        $link = $this->connect($admin_username,$admin_password);
+        $link = $this->connect($admin_username, $admin_password);
         $initial = "CREATE TABLE IF NOT EXISTS " . $table . " (id INT NOT NULL AUTO_INCREMENT,PRIMARY KEY(id) ";
         $types = " VARCHAR(200) NOT NULL";
         $later = ", UNIQUE KEY username (username), UNIQUE KEY email (email))";
@@ -246,7 +246,7 @@ class DBHandler {
     function insert($details, $table) {
         global $admin_username;
         global $admin_password;
-        $link = $this->connect($admin_username,$admin_password);
+        $link = $this->connect($admin_username, $admin_password);
         $part1 = "(";
         $part2 = "(";
 
@@ -260,18 +260,18 @@ class DBHandler {
             $part1.=$detail . ",";
             $part2.="'" . $value . "'" . ",";
         }
-        
+
         $part1.="date,time,";
         $length1 = strlen($part1);
         $part1[$length1 - 1] = ")";
 
-        
+
         $part2.="CURRENT_DATE(),CURRENT_TIME(),";
         $length2 = strlen($part2);
         $part2[$length2 - 1] = ")";
-        
+
         $query = "INSERT INTO " . $table . $part1 . " VALUES " . $part2;
-       //  echo "<br>".$query;
+        //  echo "<br>".$query;
         $inserter = mysqli_query($link, $query) or die(mysqli_error($link));
         if ($inserter) {
 
@@ -333,52 +333,83 @@ class DBHandler {
     function createTable($array, $table, $types) {
         global $admin_username;
         global $admin_password;
-        $counter=0;
+        $counter = 0;
         $link = $this->connect($admin_username, $admin_password);
         $initial = "CREATE TABLE IF NOT EXISTS " . $table . " (id INT NOT NULL AUTO_INCREMENT,PRIMARY KEY(id) ";
         foreach ($array as $key => $value) {
             if (strcmp($key, 'confirmpassword') == 0) {
                 continue;
             }
-            if(strcmp("username",$key)==0||strcmp("email",$key)==0){
-              $counter++;  
+            if (strcmp("username", $key) == 0 || strcmp("email", $key) == 0) {
+                $counter++;
             }
             $initial.=(", " . $key . $types);
-            
         }
         $initial.=", date DATE NOT NULL, time TIME NOT NULL";
-        if($counter==1 &&  strcmp($table, "saleupdate")!=0){
-        $initial.=", UNIQUE KEY username (username)";    
+        if ($counter == 1 && strcmp($table, "saleupdate") != 0) {
+            $initial.=", UNIQUE KEY username (username)";
         }
-        if($counter==2&&  strcmp($table, "saleupdate")!=0){
-        $initial.= ", UNIQUE KEY username (username), UNIQUE KEY email (email)";    
+        if ($counter == 2 && strcmp($table, "saleupdate") != 0) {
+            $initial.= ", UNIQUE KEY username (username), UNIQUE KEY email (email)";
         }
         $initial.=")";
-      //  echo $initial;
+        //  echo $initial;
         $insert = mysqli_query($link, $initial) or die(mysqli_error($link));
         return $insert;
     }
+
     /**
-     *Gets user detail by first checking if the username exists in database
+     * Gets user detail by first checking if the username exists in database
      * @global string $admin_username
      * @global string $admin_password
      * @param type $username (string)
      * @param type $table (string)
      * @return type Null if user doest exist and array if user exists
      */
-    function getUserDetail($username,$table){
+    function getUserDetail($username, $table) {
         global $admin_username;
         global $admin_password;
         $link = $this->connect($admin_username, $admin_password);
-        $usercheck=$this->checkusername($username, $table);
-         $str = "SELECT * FROM " . $table . " WHERE username = '" . $username . "'";
-         $userdetail=null;
-        if(!$usercheck){
-          $userdetail=mysqli_query($link, $str);  
+        $usercheck = $this->checkusername($username, $table);
+        $str = "SELECT * FROM " . $table . " WHERE username = '" . $username . "'";
+        $userdetail = null;
+        if (!$usercheck) {
+            $userdetail = mysqli_query($link, $str);
         }
         return $userdetail;
-        
+
         //$count = mysqli_affected_rows($link);
     }
+
+    function selectAll($table) {
+        global $admin_username;
+        global $admin_password;
+        $link = $this->connect($admin_username, $admin_password);
+        $query = "SELECT * FROM " . $table;
+        mysqli_query($link, $query);
+        $count = mysqli_affected_rows($link);
+        if($count>0){
+            return mysqli_query($link, $query);
+        }else{
+            return null;
+        }
+    }
+    
+        function deleteUser($table,$username) {
+        global $admin_username;
+        global $admin_password;
+        $link = $this->connect($admin_username, $admin_password);
+        $query = "DELETE FROM " . $table." WHERE username = "."'".$username."'";
+        //echo "<br><br>".$query;
+        mysqli_query($link, $query);
+        $count = mysqli_affected_rows($link);
+        if($count>0){
+            echo "<br> user deleted";
+        }else{
+            echo "<br> user Not deleted";
+        }
+    }
+
 }
+
 ?>

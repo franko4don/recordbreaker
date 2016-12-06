@@ -2,27 +2,43 @@
 include 'classes.php';
 include 'design.php';
 navbar("Profile");
+if(!isset($_SESSION["username"])){
+    header("location: cdlogin.php");
+}
+$dbhandler=new DBHandler;
 ?>
 <div class="container-fluid">
     <div class="row" style="padding-top: 6%;">
-        <div class="col-sm-2" style="background-color: red">scroll</div>
-        <div class="col-sm-6" >
-            
 
-                <div class="panel-group" style="font-weight: bold">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6" >
+        <h3 style="font-weight: bold; text-align: center; color: background; padding-bottom: 1%;  ">
+            <?php
+            echo $_SESSION["username"]."'s profile";
+            ?>
+        </h3>
+
+                
                     <?php
-                    //$array=array("Name"=>"Nwanze Franklin","age"=>"23","Skill"=>"Programming");
-                    //showProfile($array);
-                    ?>
-                    <div class="panel panel-default">
-                        <div class="panel-body">Name:
-                    </div>
-                    
-                </div>
+
+                    $column=array();
+                    $query=$dbhandler->selectAll("cdmarketers");
+                    while ($temp = mysqli_fetch_array($query)) {
+                        foreach($temp as $key=>$value){
+                           
+                            if(!is_integer($key)){
+                            $column[$key]=$value;
+                            }
+                        }
+               
+               
+            }
+            showProfile($column);
+ ?>
            
         </div>
-        </div>
-        <div class="col-sm-2" style="background-color: cornsilk">passport</div>
-        <div class="col-sm-2" style="background-color: green">blah blah</div>
+
+        <div class="col-sm-3"></div>
     </div>
 </div>

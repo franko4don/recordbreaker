@@ -3,7 +3,10 @@ include 'design.php';
 include 'classes.php';
 navbar("Sales");
 echo "<br><br>";
-
+$username = $_SESSION["username"];
+if (!isset($username)) {
+    header("location: cdlogin.php");
+}
 $dbhandler = new DBHandler;
 $form_handler=new FormHandler;
 $str1 = "Microsoft Word 2007,Microsoft Word 2010,Microsoft Word 2013,Microsoft Word 2016,Microsoft Excel 2007,Microsoft Excel 2007,Microsoft Excel 2010,Microsoft Excel 2013,Microsoft Excel 2016,Microsoft PowerPoint 2007,Microsoft PowerPoint 2010,Microsoft PowerPoint 2013,Microsoft PowerPoint 2016,Internet,Corel Draw X5,Operating System,Photoshop";
@@ -24,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = $form_handler->formValidation($names, "cdmarketers");
 
     if (sizeof($errors) == 0) {
-            $names["username"]=""; //to be gotten from session array
+            $names["username"]=$_SESSION["username"]; //to be gotten from session array
             
             $table_check = $dbhandler->createTable($names, "saleupdate"," VARCHAR(100) NOT NULL");
             if ($table_check) {
