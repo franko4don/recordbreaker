@@ -273,7 +273,7 @@ function showProfile($array) {
         if($key=="id"||$key=="password"||$key=="date"||$key=="time"){
             continue;
         }
-        echo '      <tr style="font-weight: bold;color: background">
+        echo '      <tr style="color: background">
         <td>'.strtoupper($key).'</td>
         <td>'.$value.'</td>
       </tr>';

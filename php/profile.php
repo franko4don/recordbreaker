@@ -23,7 +23,7 @@ $dbhandler=new DBHandler;
                     <?php
 
                     $column=array();
-                    $query=$dbhandler->selectAll("cdmarketers");
+                    $query=$dbhandler->getUserDetail($_SESSION["username"],"cdmarketers");
                     while ($temp = mysqli_fetch_array($query)) {
                         foreach($temp as $key=>$value){
                            
